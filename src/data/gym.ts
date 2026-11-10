@@ -6,6 +6,11 @@ export const gym = {
   email: 'masaruboxinggym@sage.ocn.ne.jp',
   address: '三重県津市東丸之内18-16 長谷部ビル2・3F',
   postalCode: '514-0028',
+  postalAddress: {
+    region: '三重県',
+    locality: '津市',
+    street: '東丸之内18-16 長谷部ビル2・3F',
+  },
   parkingAddress: '三重県津市東丸之内17-13',
   admissionFee: '7,700',
   administrationFee: '3,300',

@@ -1,5 +1,7 @@
 # まさるボクシングジム 編集ガイド
 
+SEO設定と公開後のSearch Console登録などは [SEO.md](./SEO.md) に記載しています。本番URLは `https://masarugym.pages.dev/` です。
+
 ## 主なファイル
 
 - ページ本体: `src/pages/index.astro`

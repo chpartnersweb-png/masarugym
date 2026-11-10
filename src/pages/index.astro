@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import heroImage from '../assets/generated/boxing-hero.png';
 import detailImage from '../assets/generated/boxing-wraps.png';
 import Icon from '../components/Icon.astro';
@@ -7,6 +7,7 @@ import ParkingMap from '../components/ParkingMap.astro';
 import TrainingGallery from '../components/TrainingGallery.astro';
 import JoinVisual from '../components/JoinVisual.astro';
 import { gym, fees, campaign, news } from '../data/gym';
+import { seo, createStructuredData } from '../data/seo';
 import '../styles/global.css';
 import '../styles/motion.css';
 
@@ -14,6 +15,10 @@ const mapLink = (query: string) => `https://www.google.com/maps/search/?api=1&qu
 const gymMap = `https://www.google.com/maps?q=${encodeURIComponent('まさるボクシングジム 三重県津市東丸之内18-16')}&output=embed`;
 const parkingMap = `https://www.google.com/maps?q=${encodeURIComponent(gym.parkingAddress)}&output=embed`;
 const nav = [{ href: '#about', label: 'ジムについて' }, { href: '#course', label: 'コース・料金' }, { href: '#join', label: '入会案内' }, { href: '#access', label: 'アクセス' }];
+const canonical = new URL('/', Astro.site).href;
+const socialImage = await getImage({ src: heroImage, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 85 });
+const socialImageUrl = new URL(socialImage.src, Astro.site).href;
+const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/</g, '\\u003c');
 ---
 <!doctype html>
 <html lang="ja">
@@ -21,15 +26,32 @@ const nav = [{ href: '#about', label: 'ジムについて' }, { href: '#course',
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#171918" />
-    <meta name="description" content="三重県津市のまさるボクシングジム。公式試合を目指す方から、ダイエット・体力づくり・ストレス解消まで。REレギュラーコースの料金、入会方法、アクセス・会員専用駐車場をご案内します。" />
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="まさるボクシングジム｜DO IT!! FOR YOURSELF" />
-    <meta property="og:description" content="三重県津市。自分のために、踏み出そう。ボクシングを、あなたの毎日に。" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content={gym.name} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:image" content={socialImageUrl} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={seo.socialImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seo.title} />
+    <meta name="twitter:description" content={seo.description} />
+    <meta name="twitter:image" content={socialImageUrl} />
+    <meta name="twitter:image:alt" content={seo.socialImageAlt} />
+    <script type="application/ld+json" set:html={structuredData} />
     <link rel="icon" type="image/svg+xml" href="/masaru-mark.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;0,900;1,800;1,900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <title>まさるボクシングジム｜DO IT!! FOR YOURSELF</title>
   </head>
   <body>
     <a class="skip-link" href="#main">本文へ進む</a>
@@ -45,7 +67,7 @@ const nav = [{ href: '#about', label: 'ジムについて' }, { href: '#course',
         <Image class="hero-image" src={heroImage} alt="グローブを構えるボクサーのイメージ" widths={[720, 1280, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
         <div class="hero-shade"></div>
         <div class="hero-content">
-          <p class="hero-eyebrow"><span></span> MASARU BOXING GYM / TSU, MIE</p>
+          <p class="hero-eyebrow"><span></span> 三重県津市｜まさるボクシングジム</p>
           <h1 id="hero-title"><span class="hero-title-line"><span>DO IT!!</span></span><span class="hero-title-line"><span>FOR <em>YOURSELF.</em></span></span></h1>
           <p class="hero-japanese">自分のために、踏み出そう。</p><p class="hero-caption">強くなりたい。変わりたい。楽しみたい。<br />その想いが、あなたのスタートライン。</p>
           <a class="button button-orange" href="#course">ボクシングをはじめる <Icon name="arrow" /></a>
