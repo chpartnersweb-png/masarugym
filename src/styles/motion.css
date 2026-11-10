@@ -1,0 +1,83 @@
+/* Scroll animation and photo composition. Content stays visible without JavaScript. */
+html.lenis { scroll-behavior: auto; }
+.site-header { border-bottom: 0; }
+.desktop-nav a::after { content: none; }
+.desktop-nav a { transition: color .25s; }
+.desktop-nav a:hover { color: var(--orange); }
+.hero-content { animation: none; }
+.hero h1 > .hero-title-line { display: block; overflow: hidden; color: inherit; padding: .055em .035em; margin: -.055em -.035em; }
+.hero-title-line > span { display: block; transform-origin: left center; }
+.hero-title-line em { font-style: inherit; color: var(--orange); }
+.training-photo > img { transition: none; }
+.training-photo:hover > img { transform: none; }
+
+.hero-scroll { position: absolute; z-index: 3; left: 50%; bottom: 25px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px 13px; }
+.scroll-label { font-family: var(--font-en); font-size: 10px; line-height: 1; letter-spacing: .2em; writing-mode: vertical-rl; }
+.hero-scroll .scroll-line { width: 1px; height: 54px; background: #ffffff40; overflow: hidden; }
+.hero-scroll .scroll-line::after { width: 1px; height: 30px; background: var(--orange); animation: scroll-down 2s cubic-bezier(.65,0,.35,1) infinite; }
+@keyframes scroll-down { 0% { transform: translateY(-32px); } 100% { transform: translateY(57px); } }
+
+.photo-story { background: #242725; color: var(--paper); padding-block: 65px 45px; overflow: hidden; }
+.story-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 32px; }
+.story-heading .eyebrow { color: var(--orange); font-size: 13px; }
+.story-heading h2 { margin-top: 13px; font-size: clamp(30px,3vw,44px); }
+.story-heading > p { font-size: 11px; line-height: 2; color: #b8b9af; padding-bottom: 4px; }
+.story-viewport { margin-inline: var(--gutter); overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: var(--orange) #ffffff20; scroll-snap-type: x mandatory; scroll-padding-inline: 0; overscroll-behavior-x: contain; }
+.story-track { display: flex; align-items: flex-start; width: max-content; gap: 28px; padding-bottom: 15px; }
+.story-card { flex: 0 0 auto; width: min(48vw,690px); margin: 0; scroll-snap-align: start; }
+.story-image { position: relative; height: clamp(260px,42vh,440px); overflow: hidden; background: #181a18; }
+.story-image > img { width: 100%; height: 100%; object-fit: cover; }
+.story-image::after { content: ''; position: absolute; inset: 35% 0 0; background: linear-gradient(transparent,#0c100e99); pointer-events: none; }
+.story-number { position: absolute; z-index: 1; top: 17px; left: 20px; font-family: var(--font-en); font-size: 14px; letter-spacing: .1em; border: 1px solid #ffffff65; padding: 2px 9px; }
+.story-word { position: absolute; z-index: 1; left: 24px; bottom: 12px; font-family: var(--font-en); font-size: clamp(54px,6vw,86px); line-height: 1; font-weight: 800; font-style: italic; letter-spacing: -.02em; }
+.story-card figcaption { display: flex; align-items: baseline; gap: 20px; justify-content: space-between; padding-top: 19px; }
+.story-card h3 { font-size: 16px; font-weight: 600; }
+.story-card figcaption p { font-size: 10px; color: #a7aa9f; }
+.story-footer { display: flex; align-items: center; justify-content: space-between; gap: 22px; margin-top: 24px; font-family: var(--font-en); font-size: 10px; color: #afb3a7; letter-spacing: .12em; }
+.story-progress { width: min(34vw,360px); height: 1px; background: #ffffff25; }
+.story-progress > span { display: block; height: 1px; background: var(--orange); transform: scaleX(.15); transform-origin: left; }
+.photo-story.is-pinned { display: flex; flex-direction: column; justify-content: center; min-height: 100svh; }
+.is-pinned .story-viewport { overflow: hidden; scroll-snap-type: none; }
+.is-pinned .story-track { will-change: transform; }
+
+.join-visual { position: relative; isolation: isolate; overflow: hidden; height: clamp(240px,25vw,355px); margin: 0 0 45px; background: var(--ink); }
+.join-visual > img { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 57%; }
+.join-visual::after { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg,#111510ac,transparent 85%); }
+.join-visual figcaption { position: absolute; bottom: 35px; left: 35px; font-family: var(--font-en); font-size: clamp(45px,6vw,85px); line-height: 1; font-weight: 700; font-style: italic; letter-spacing: -.02em; color: var(--paper); }
+.join-visual figcaption > span { display: block; font-family: var(--font-ja); font-size: 11px; font-weight: 500; font-style: normal; letter-spacing: .08em; margin-top: 16px; }
+.join-visual .photo-label { left: auto; right: 20px; bottom: 15px; font-size: 8px; }
+
+@media(max-width:1060px) {
+  .photo-story { padding-block: 50px 35px; }
+  .story-heading > p { display: none; }
+  .story-card { width: min(78vw,620px); }
+  .story-image { height: auto; aspect-ratio: 4 / 3; }
+  .story-card figcaption { display: block; }
+  .story-card figcaption p { margin-top: 7px; }
+  .story-progress { display: none; }
+}
+@media(max-width:760px) {
+  .hero-title-line em { display: block; }
+  .hero-scroll { left: auto; right: 13px; bottom: 100px; transform: none; padding: 8px; gap: 10px; }
+  .scroll-label { font-size: 8px; letter-spacing: .14em; }
+  .hero-scroll .scroll-line { height: 42px; }
+  .photo-story { padding-block: 40px 30px; }
+  .story-heading { margin-bottom: 25px; }
+  .story-heading h2 { font-size: 30px; line-height: 1.5; }
+  .story-heading .eyebrow { font-size: 11px; }
+  .story-track { gap: 18px; }
+  .story-card { width: 81vw; }
+  .story-number { top: 12px; left: 14px; font-size: 11px; padding: 2px 7px; }
+  .story-word { font-size: 54px; left: 17px; bottom: 15px; }
+  .story-card figcaption { padding-top: 16px; }
+  .story-card h3 { font-size: 15px; }
+  .story-card figcaption p { font-size: 10px; }
+  .story-footer { margin-top: 20px; font-size: 9px; }
+  .join-visual { height: 260px; margin-bottom: 30px; }
+  .join-visual figcaption { left: 22px; bottom: 35px; font-size: 44px; }
+  .join-visual figcaption > span { font-size: 9px; margin-top: 12px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .hero-scroll .scroll-line::after { animation: none; transform: none; }
+  .story-progress { display: none; }
+}

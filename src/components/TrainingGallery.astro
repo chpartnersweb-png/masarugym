@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import mittImage from '../assets/generated/mitt-training.png';
+import bagImage from '../assets/generated/bag-training.png';
+import footworkImage from '../assets/generated/footwork.png';
+
+const scenes = [
+  { image: mittImage, word: 'FOCUS.', label: '一打に、集中する。', description: '目標に向かって、一歩ずつ。', alt: 'ミット打ちに取り組む大人のボクサーとトレーナーのイメージ' },
+  { image: bagImage, word: 'RELEASE.', label: '思いきり、解き放つ。', description: 'からだを動かす、その気持ちよさを。', alt: 'サンドバッグに向かってパンチを打つ女性のイメージ' },
+  { image: footworkImage, word: 'YOUR PACE.', label: '自分のリズムを、つかむ。', description: '昨日の自分から、少しずつ前へ。', alt: 'リングでフットワークの練習をする足元のイメージ' },
+];
+---
+<section class="photo-story" aria-labelledby="story-title">
+  <div class="wrap story-heading"><div><p class="eyebrow">FEEL THE BOXING.</p><h2 id="story-title">夢中になれる、<br class="mobile-only" />その瞬間。</h2></div><p>一打ずつ、自分らしく。<br />ボクシングのある毎日へ。</p></div>
+  <div class="story-viewport" tabindex="0" role="region" aria-label="トレーニングのイメージギャラリー。左右にスクロールできます。" data-lenis-prevent-horizontal>
+    <div class="story-track">
+      {scenes.map((scene,index) => <figure class="story-card"><div class="story-image"><Image src={scene.image} alt={scene.alt} widths={[480, 800, 1200]} sizes="(max-width: 1060px) 82vw, 48vw" loading="lazy" /><span class="story-number">0{index+1}</span><span class="story-word" aria-hidden="true">{scene.word}</span></div><figcaption><h3>{scene.label}</h3><p>{scene.description}</p></figcaption></figure>)}
+    </div>
+  </div>
+  <div class="wrap story-footer"><span>TRAINING VISUALS / IMAGE</span><div class="story-progress" aria-hidden="true"><span></span></div><span>01 — 03</span></div>
+</section>
