@@ -1,7 +1,12 @@
 ---
 import { Image, getImage } from 'astro:assets';
-import heroImage from '../assets/generated/boxing-hero.png';
-import detailImage from '../assets/generated/boxing-wraps.png';
+import socialImageSource from '../assets/generated/boxing-hero.png';
+import desktopHero from '../assets/images/desktop-hero.png';
+import tabletHero from '../assets/images/tablet-hero.png';
+import mobileHero from '../assets/images/sp-hero.png';
+import logo from '../assets/images/logo.png';
+import yourself from '../assets/images/yourself.png';
+import trainingImage from '../assets/images/training.jpg';
 import Icon from '../components/Icon.astro';
 import ParkingMap from '../components/ParkingMap.astro';
 import TrainingGallery from '../components/TrainingGallery.astro';
@@ -9,14 +14,21 @@ import JoinVisual from '../components/JoinVisual.astro';
 import { gym, fees, campaign, news } from '../data/gym';
 import { seo, createStructuredData } from '../data/seo';
 import '../styles/global.css';
-import '../styles/motion.css';
+import '../styles/visuals.css';
 
 const mapLink = (query: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 const gymMap = `https://www.google.com/maps?q=${encodeURIComponent('まさるボクシングジム 三重県津市東丸之内18-16')}&output=embed`;
 const parkingMap = `https://www.google.com/maps?q=${encodeURIComponent(gym.parkingAddress)}&output=embed`;
+const { weekdays, weekends, checkInNote } = gym.hours;
+const weekdayHours = `${weekdays.opens}～${weekdays.closes}`;
+const weekendHours = `${weekends.opens}～${weekends.closes}`;
 const nav = [{ href: '#about', label: 'ジムについて' }, { href: '#course', label: 'コース・料金' }, { href: '#join', label: '入会案内' }, { href: '#access', label: 'アクセス' }];
 const canonical = new URL('/', Astro.site).href;
-const socialImage = await getImage({ src: heroImage, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 85 });
+const [tabletHeroImage, mobileHeroImage, socialImage] = await Promise.all([
+  getImage({ src: tabletHero, format: 'webp' }),
+  getImage({ src: mobileHero, format: 'webp' }),
+  getImage({ src: socialImageSource, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 85 }),
+]);
 const socialImageUrl = new URL(socialImage.src, Astro.site).href;
 const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/</g, '\\u003c');
 ---
@@ -25,7 +37,7 @@ const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#171918" />
+    <meta name="theme-color" content="#ffffff" />
     <title>{seo.title}</title>
     <meta name="description" content={seo.description} />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -56,7 +68,12 @@ const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/
   <body>
     <a class="skip-link" href="#main">本文へ進む</a>
     <header class="site-header" id="top">
-      <a class="brand" href="#top" aria-label="まさるボクシングジム トップ"><span class="brand-mark" aria-hidden="true">M<span>／</span></span><span class="brand-type">MASARU<span>BOXING GYM <i>TSU, MIE</i></span></span></a>
+      <div class="brand">
+        <p class="brand-affiliation">三重県ボクシング連盟加盟</p>
+        <a href="#top" aria-label="まさるボクシングジム トップ">
+          <Image src={logo} alt="" width={320} format="webp" />
+        </a>
+      </div>
       <nav class="desktop-nav" aria-label="メインナビゲーション">{nav.map(item => <a href={item.href}>{item.label}</a>)}</nav>
       <div class="header-actions"><a class="header-instagram" href={gym.instagram} target="_blank" rel="noopener noreferrer" aria-label="公式Instagram（新しいタブ）"><Icon name="instagram" /></a><a class="header-contact" href="#contact">見学・体験のお問い合わせ <Icon name="arrow" /></a><button class="menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="メニューを開く"><span></span><span></span></button></div>
     </header>
@@ -64,16 +81,46 @@ const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/
 
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
-        <Image class="hero-image" src={heroImage} alt="グローブを構えるボクサーのイメージ" widths={[720, 1280, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
+        <picture>
+          <source media="(max-width: 760px) and (orientation: portrait)" srcset={mobileHeroImage.src} width={mobileHero.width} height={mobileHero.height} />
+          <source media="(max-width: 1060px)" srcset={tabletHeroImage.src} width={tabletHero.width} height={tabletHero.height} />
+          <Image class="hero-image" src={desktopHero} alt="パンチングボールに向かって拳を構えるボクサー" format="webp" loading="eager" fetchpriority="high" />
+        </picture>
         <div class="hero-shade"></div>
         <div class="hero-content">
-          <p class="hero-eyebrow"><span></span> 三重県津市｜まさるボクシングジム</p>
-          <h1 id="hero-title"><span class="hero-title-line"><span>DO IT!!</span></span><span class="hero-title-line"><span>FOR <em>YOURSELF.</em></span></span></h1>
-          <p class="hero-japanese">自分のために、踏み出そう。</p><p class="hero-caption">強くなりたい。変わりたい。楽しみたい。<br />その想いが、あなたのスタートライン。</p>
-          <a class="button button-orange" href="#course">ボクシングをはじめる <Icon name="arrow" /></a>
+          <div class="hero-heading">
+            <p class="hero-eyebrow"><span></span> 三重県津市｜まさるボクシングジム</p>
+            <div class="hero-title-block">
+              <h1 id="hero-title">
+                <Image
+                  class="hero-title-image"
+                  src={yourself}
+                  alt="DO IT!! FOR YOURSELF."
+                  widths={[480, 800, 1200, 1920]}
+                  sizes="(min-width: 1061px) and (min-height: 581px) min(57vw, 960px, 93dvh), (min-width: 560px) and (max-height: 580px) and (orientation: landscape) 46vw, (max-width: 374px) min(100vw - 40px, 76dvh), (max-width: 760px) min(100vw - 48px, 560px, 76dvh), min(65vw, 960px, 72dvh)"
+                  format="webp"
+                  quality={90}
+                  loading="eager"
+                />
+              </h1>
+              <ul class="hero-benefits" role="list" aria-label="ご利用の特徴">
+                <li>月会費制</li>
+                <li>予約不要で通い放題</li>
+                <li>毎回トレーナーの指導あり</li>
+              </ul>
+            </div>
+          </div>
+          <div class="hero-message">
+            <p class="hero-japanese">自分のために、踏み出そう。</p>
+            <p class="hero-caption">強くなりたい。変わりたい。楽しみたい。<br />その想いが、あなたのスタートライン。</p>
+            <a class="button button-orange" href="#course">ボクシングをはじめる <Icon name="arrow" /></a>
+          </div>
         </div>
-        <div class="hero-bottom"><span>三重県ボクシング連盟加盟</span><span class="image-credit">VISUAL IMAGE</span></div>
-        <a class="hero-scroll" href="#about" aria-label="下へスクロールしてジムについて見る"><span class="scroll-label">SCROLL</span><span class="scroll-line" aria-hidden="true"></span></a>
+        <div class="hero-bottom">
+          <span>三重県ボクシング連盟加盟</span>
+          <a class="hero-scroll" href="#about" aria-label="下へスクロールしてジムについて見る"><span class="scroll-label">SCROLL</span><span class="scroll-line" aria-hidden="true"></span></a>
+          <span class="image-credit">VISUAL IMAGE</span>
+        </div>
         <span class="hero-side" aria-hidden="true">EVERY PUNCH. A NEW YOU.</span>
       </section>
       <div class="identity-strip" aria-label="ジムの特徴"><span>FOR ALL GENERATIONS</span><i>✳</i><span>FOR EVERY GOAL</span><i>✳</i><span>THIS IS YOUR BOXING.</span><i>✳</i><span class="strip-last">MASARU BOXING GYM</span></div>
@@ -82,26 +129,72 @@ const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/
       {news.length > 0 && <section class="news-list wrap" aria-label="ジムからのお知らせ">{news.map(article => <details><summary><time datetime={article.date}>{article.date.replaceAll('-', '.')}</time><span>{article.category}</span>{article.title}<Icon name="plus" /></summary><p>{article.body}</p></details>)}</section>}
       <aside class="campaign wrap" id="campaign" hidden data-enabled={String(campaign.enabled)} data-start={campaign.startsAt} data-end={campaign.endsAt}><span class="eyebrow">LIMITED CAMPAIGN</span><h2>{campaign.title}</h2><p>{campaign.description}</p><p class="campaign-period"></p><a href="#contact" class="text-link">キャンペーンについて問い合わせる <Icon name="arrow" /></a></aside>
 
-      <section class="about section wrap" id="about" aria-labelledby="about-title"><div class="section-index"><span class="eyebrow">01 / ABOUT US</span><span>まさるボクシングジムについて</span></div><div class="about-grid"><div class="about-heading"><h2 id="about-title">目指す自分は、<br />ひとりひとり<br /><span>違っていい。</span></h2><p class="big-english" aria-hidden="true">YOUR GOAL.<br />YOUR BOXING.</p></div><div class="about-copy"><p class="lead">ボクシングを、あなたの毎日に。</p><p>津市で唯一のアマチュアボクシング連盟加盟ジムです。U.J（小5〜中3）、高校生、大学生、社会人、男女共公式試合出場可能！</p><p>その他、ボクシングフィットネスでダイエット＆シェイプUP、体力づくりやストレス解消 etc. 全ての目的にお応えします！</p><div class="goal-list"><span>公式試合への挑戦</span><span>ダイエット・シェイプUP</span><span>体力づくり</span><span>ストレス解消</span></div><a class="text-link" href="#course">あなたのペースで、はじめよう <Icon name="arrow" /></a></div></div></section>
+      <section class="about section wrap" id="about" aria-labelledby="about-title"><div class="section-index"><span class="eyebrow">01 / ABOUT US</span><span>まさるボクシングジムについて</span></div><div class="about-grid" data-reveal=""><div class="about-heading"><h2 id="about-title">目指す自分は、<br />ひとりひとり<br /><span>違っていい。</span></h2><p class="big-english" aria-hidden="true">YOUR GOAL.<br />YOUR BOXING.</p></div><div class="about-copy"><p class="lead">ボクシングを、あなたの毎日に。</p><p>津市で唯一のアマチュアボクシング連盟加盟ジムです。U.J（小5〜中3）、高校生、大学生、社会人、男女共公式試合出場可能！</p><p>その他、ボクシングフィットネスでダイエット＆シェイプUP、体力づくりやストレス解消 etc. 全ての目的にお応えします！</p><div class="goal-list"><span>公式試合への挑戦</span><span>ダイエット・シェイプUP</span><span>体力づくり</span><span>ストレス解消</span></div><a class="text-link" href="#course">あなたのペースで、はじめよう <Icon name="arrow" /></a></div></div></section>
 
-      <section class="training" aria-labelledby="training-title"><div class="training-photo"><Image src={detailImage} alt="オレンジのバンデージを巻き、練習の準備をする手元のイメージ" widths={[600, 1000, 1400]} sizes="(max-width: 760px) 100vw, 55vw" loading="lazy" /><span class="photo-label">TRAINING IMAGE</span></div><div class="training-copy"><span class="eyebrow">A PLACE TO CHALLENGE YOURSELF</span><h2 id="training-title">思いきり動ける。<br />だから、続けられる。</h2><p>2フロアの広々としたジムスペース。<br />本格的なトレーニングにも、日々の体力づくりにも。</p><dl class="facility-list"><div><dt><strong>2</strong> FLOORS</dt><dd>大型リング・サンドバッグ類<br />筋トレルーム</dd></div><div><dt>COMFORT</dt><dd>男女別更衣室・シャワー室</dd></div><div><dt><strong>20</strong> CARS</dt><dd>最大20台駐車可能<br />会員専用大型駐車場を隣接に完備</dd></div></dl><a class="text-link" href="#access">アクセス・駐車場のご案内 <Icon name="arrow" /></a></div></section>
+      <section class="training" aria-labelledby="training-title">
+        <div class="training-photo">
+          <Image src={trainingImage} alt="リング上でミット打ちの練習をする二人" widths={[600, 1000, 1400]} sizes="(max-width: 760px) 100vw, 55vw" loading="lazy" />
+        </div>
+        <div class="training-copy" data-reveal="">
+          <span class="eyebrow">A PLACE TO CHALLENGE YOURSELF</span>
+          <h2 id="training-title">思いきり動ける。<br />だから、続けられる。</h2>
+          <dl class="facility-list">
+            <div>
+              <dt>【３F】</dt>
+              <dd>大型リング＆サンドバッグ類（大・中・小 計6基）・シャワー室</dd>
+            </div>
+            <div>
+              <dt>【２F】</dt>
+              <dd>ウォーミングアップ＆stretchスペース・トレーニングmachineスペース・男女別更衣室・事務室</dd>
+            </div>
+          </dl>
+          <p>※各室に冷暖房完備</p>
+          <p class="training-parking">最大20台駐車可能<br />会員専用大型駐車場を隣接に完備</p>
+          <a class="text-link" href="#access">アクセス・駐車場のご案内 <Icon name="arrow" /></a>
+        </div>
+      </section>
 
       <TrainingGallery />
 
-      <section class="course section wrap" id="course" aria-labelledby="course-title"><div class="section-index"><span class="eyebrow">02 / COURSE & PRICE</span><span>コース・料金</span></div><div class="course-heading"><div><p class="eyebrow">自分のペースで、何度でも。</p><h2 id="course-title"><span class="course-re">RE</span> レギュラーコース</h2></div><span class="course-badge">予約不要<span>通い放題</span></span></div><div class="course-intro"><p>選手・選手志望の方を中心とした本格的なボクシングトレーニング。<br />キッズ・一般男女・シニア、それぞれの目的に合わせて行います。<br />シェイプUPや体力づくりを目指す方も歓迎します。</p><p class="course-promise">月に何度でも利用OK。<br /><strong>毎回、ミット打ちなどの指導付！</strong></p></div><div class="schedule"><span>TRAINING HOURS</span><p>平日 <strong>17:00–21:30</strong></p><p>土日 <strong>14:00–18:00</strong></p><small>火曜・祝日休館<br />※試合日などで不定休あり</small></div><div class="price-layout"><div class="initial-fees"><p class="eyebrow">INITIAL FEE</p><h3>はじめにかかる費用</h3><dl><div><dt>入会金</dt><dd><strong>{gym.admissionFee}</strong> 円</dd></div><div><dt>事務手数料 <small>初回のみ</small></dt><dd><strong>{gym.administrationFee}</strong> 円</dd></div></dl><p>入会時に上記費用と<br />2ヶ月分の月会費をご用意ください。</p></div><div class="monthly-fees"><p class="price-table-heading">月会費 <span>MONTHLY MEMBERSHIP</span></p><table><caption class="sr-only">REレギュラーコース 会員種別ごとの月会費</caption><thead><tr><th scope="col">会員種別</th><th scope="col">月会費（税込）</th></tr></thead><tbody>{fees.map(fee => <tr><th scope="row">{fee.label}</th><td><strong>{fee.price}</strong><span> 円 / 月</span></td></tr>)}</tbody></table></div></div><p class="price-note">※掲載料金はすべて税込です。</p><aside class="personal-note"><span class="eyebrow">ANOTHER WAY TO TRAIN</span><p>午前中からの完全パーソナル・セミパーソナルクラスもご用意しておりますので、ご連絡お待ちしております。</p><a href="#contact" aria-label="パーソナル・セミパーソナルクラスについて問い合わせる"><Icon name="arrow" /></a></aside></section>
+      <section class="course section wrap" id="course" aria-labelledby="course-title"><div class="section-index"><span class="eyebrow">02 / COURSE & PRICE</span><span>コース・料金</span></div><div class="course-heading" data-reveal=""><div><p class="eyebrow">自分のペースで、何度でも。</p><h2 id="course-title"><span class="course-re">RE</span> レギュラーコース</h2></div><p class="course-intro">選手・選手志望の方を中心とした本格的なボクシングトレーニング。<br />キッズ・一般男女・シニア、それぞれの目的に合わせて行います。<br />シェイプUPや体力づくりを目指す方も歓迎します。</p></div><p class="personal-note">午前中からの完全パーソナル・セミパーソナルクラスもご用意しておりますので、ご連絡お待ちしております。</p><div class="schedule"><span>TRAINING HOURS</span><p>平日 <strong>{weekdayHours}</strong></p><p>土日 <strong>{weekendHours}</strong></p><small>火曜・祝日休館<br />※試合日などで不定休あり</small><p class="schedule-check-in">{checkInNote}</p></div><div class="price-layout"><div class="initial-fees"><p class="eyebrow">INITIAL FEE</p><h3>はじめにかかる費用</h3><dl><div><dt>入会金</dt><dd><strong>{gym.admissionFee}</strong> 円</dd></div><div><dt>事務手数料 <small>初回のみ</small></dt><dd><strong>{gym.administrationFee}</strong> 円</dd></div></dl><p>入会時に上記費用と<br />2ヶ月分の月会費をご用意ください。</p></div><div class="monthly-fees"><p class="price-table-heading">月会費 <span>MONTHLY MEMBERSHIP</span></p><table><caption class="sr-only">REレギュラーコース 会員種別ごとの月会費</caption><thead><tr><th scope="col">会員種別</th><th scope="col">月会費（税込）</th></tr></thead><tbody>{fees.map(fee => <tr><th scope="row">{fee.label}</th><td><strong>{fee.price}</strong><span> 円 / 月</span></td></tr>)}</tbody></table></div></div><p class="price-note">※掲載料金はすべて税込です。</p></section>
 
-      <section class="join section" id="join" aria-labelledby="join-title"><div class="wrap"><div class="section-index"><span class="eyebrow">03 / GET STARTED</span><span>入会のご案内</span></div><div class="join-heading"><h2 id="join-title">はじめの一歩を、<br />ここから。</h2><p>まずはジムの雰囲気を見に来ませんか。<br />見学・説明は随時受付中。<br />1日体験はお電話でのご予約制です。</p></div><JoinVisual /><ol class="steps"><li><span class="step-no">01</span><h3>見学・体験のお問い合わせ</h3><p>1日体験をご希望の方は、お電話で日時をご予約ください。見学や入会についてもお気軽にどうぞ。</p><a href={gym.phoneHref}>{gym.phone} <Icon name="arrow" /></a></li><li><span class="step-no">02</span><h3>ジムで体験・ご案内</h3><p>体験レッスンは60分程度。目的や気になることをお聞かせください。</p><small>体験料 2,000円（税込）／お一人1回限り<br />体験時はコインパーキングをご利用ください。</small></li><li><span class="step-no">03</span><h3>お手続き・トレーニング開始</h3><p>必要なものをご持参のうえ、ジムで入会手続き。あなたの目的に合わせたボクシングをはじめましょう。</p></li></ol><div class="join-checklists"><div><span class="eyebrow">FOR MEMBERSHIP</span><h3>入会時に必要なもの</h3><ul><li>身分証明書（免許証・マイナンバーカードなど）</li><li>銀行届出印・口座データ</li><li>入会金・事務手数料＋2ヶ月分の月会費（現金）</li></ul></div><div><span class="eyebrow">FOR TRAINING</span><h3>練習時に必要なもの</h3><ul><li>室内用シューズ</li><li>タオル・ドリンク</li><li>バンデージ（ジムで販売しています）</li></ul></div></div><p class="payment-note">入会時は現金にてお支払いいただきます。銀行手続き終了後、3ヶ月目から銀行口座より自動引き落としとなります。</p></div></section>
+      <section class="join section" id="join" aria-labelledby="join-title"><div class="wrap"><div class="section-index"><span class="eyebrow">03 / GET STARTED</span><span>入会のご案内</span></div><div class="join-heading" data-reveal=""><h2 id="join-title">はじめの一歩を、<br />ここから。</h2><p>まずはジムの雰囲気を見に来ませんか。<br />見学・説明は随時受付中。<br />1日体験はお電話でのご予約制です。</p></div><JoinVisual />
+          <ol class="steps" data-reveal="">
+            <li>
+              <span class="step-no">01</span>
+              <h3>まずは、見学または1日体験から。</h3>
+              <p>見学や入会のご説明は、随時受け付けています。<br />お電話でお問い合わせください。</p>
+              <a href={gym.phoneHref}><span aria-hidden="true">☎</span> <strong>{gym.phone}</strong></a>
+            </li>
+            <li>
+              <span class="step-no">02</span>
+              <h3>1日体験について</h3>
+              <ul class="step-details">
+                <li>電話予約制 / レッスン約60分</li>
+                <li>体験料 2,000円（お一人様1回限り）</li>
+                <li>体験当日に入会された場合は、体験料無料</li>
+                <li>体験日の翌日から1か月以内に入会された場合は、<br />体験料をキャッシュバックいたします。</li>
+              </ul>
+            </li>
+            <li>
+              <span class="step-no">03</span>
+              <h3>その日から早速トレーニングも可能です。</h3>
+              <p>入会手続きが完了したその日から、ご自身の目的に合わせたボクシングを始められます。</p>
+            </li>
+          </ol>
+          <div class="join-checklists"><div><span class="eyebrow">FOR MEMBERSHIP</span><h3>入会時に必要なもの</h3><ul><li>身分証明書（免許証・マイナンバーカードなど）</li><li>銀行届出印・口座データ</li><li>入会金・事務手数料＋2ヶ月分の月会費（現金）</li></ul></div><div><span class="eyebrow">FOR TRAINING</span><h3>練習時に必要なもの</h3><ul><li>室内用シューズ</li><li>タオル・ドリンク</li><li>バンデージ（ジムで販売しています）</li></ul></div></div><p class="payment-note">入会時は現金にてお支払いいただきます。銀行手続き終了後、3ヶ月目から銀行口座より自動引き落としとなります。</p></div></section>
 
-      <section class="instagram-section" aria-labelledby="instagram-title"><a href={gym.instagram} target="_blank" rel="noopener noreferrer" class="wrap instagram-banner"><div><p class="eyebrow"><Icon name="instagram" /> FOLLOW OUR DAYS</p><h2 id="instagram-title">ジムの今を、<br class="mobile-only" />Instagramで。</h2><p>練習風景、大会のこと、お知らせ。<br />まさるジムの日常を発信しています。</p></div><div class="instagram-handle"><span>@masarugym</span><span class="circle-arrow"><Icon name="arrow" /></span></div></a></section>
+      <section class="instagram-section" aria-labelledby="instagram-title"><a href={gym.instagram} target="_blank" rel="noopener noreferrer" class="wrap instagram-banner" data-reveal=""><div><p class="eyebrow"><Icon name="instagram" /> FOLLOW OUR DAYS</p><h2 id="instagram-title">ジムの今を、<br class="mobile-only" />Instagramで。</h2><p>練習風景、大会のこと、お知らせ。<br />まさるジムの日常を発信しています。</p></div><div class="instagram-handle"><span>@masarugym</span><span class="circle-arrow"><Icon name="arrow" /></span></div></a></section>
 
-      <section class="access section wrap" id="access" aria-labelledby="access-title"><div class="section-index"><span class="eyebrow">04 / ACCESS</span><span>アクセス・駐車場</span></div><div class="access-heading"><h2 id="access-title">ここが、あなたの<br />スタートライン。</h2><p class="access-english" aria-hidden="true">SEE YOU<br /><span>AT THE GYM.</span></p></div><div class="access-grid"><div class="access-info"><h3>{gym.name}</h3><p>〒{gym.postalCode}<br />三重県津市東丸之内18-16<br />長谷部ビル2・3F</p><dl><div><dt>平日</dt><dd>17:00–21:30</dd></div><div><dt>土日</dt><dd>14:00–18:00</dd></div><div><dt>休館日</dt><dd>火曜・祝日<br /><small>※試合日などで不定休あり</small></dd></div></dl><a class="text-link" href={mapLink('まさるボクシングジム ' + gym.address)} target="_blank" rel="noopener noreferrer">Googleマップでジムを見る <Icon name="arrow" /></a><div class="parking-info"><span class="parking-p">P</span><div><h4>会員専用大型駐車場</h4><p>最大20台駐車可能<br />三重県津市東丸之内17-13</p><a href={mapLink(gym.parkingAddress)} target="_blank" rel="noopener noreferrer">駐車場の住所をGoogleマップで見る ↗</a></div></div></div><div class="maps"><div class="map-tabs" role="tablist" aria-label="マップの表示場所"><button id="gym-tab" role="tab" aria-selected="true" aria-controls="gym-map">ジムの所在地 <Icon name="pin" /></button><button id="parking-tab" role="tab" aria-selected="false" aria-controls="parking-map" tabindex="-1">会員専用駐車場 <span>P</span></button></div><div role="tabpanel" id="gym-map" aria-labelledby="gym-tab"><iframe src={gymMap} title="まさるボクシングジムの所在地" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div><div role="tabpanel" id="parking-map" aria-labelledby="parking-tab" hidden><iframe src={parkingMap} title="会員専用駐車場の住所：津市東丸之内17-13" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div><details class="parking-details"><summary>ジムと駐車場の位置関係を見る <Icon name="plus" /></summary><ParkingMap /><p>会員専用駐車場はチラシ掲載住所の地図を表示しています。駐車区画は現地の案内をご確認ください。</p></details></div></div></section>
+      <section class="access section wrap" id="access" aria-labelledby="access-title"><div class="section-index"><span class="eyebrow">04 / ACCESS</span><span>アクセス・駐車場</span></div><div class="access-heading" data-reveal=""><h2 id="access-title">ここが、あなたの<br />スタートライン。</h2><p class="access-english" aria-hidden="true">SEE YOU<br /><span>AT THE GYM.</span></p></div><div class="access-grid"><div class="access-info"><h3>{gym.name}</h3><p>〒{gym.postalCode}<br />三重県津市東丸之内18-16<br />長谷部ビル2・3F</p><dl><div><dt>平日</dt><dd>{weekdayHours}</dd></div><div><dt>土日</dt><dd>{weekendHours}</dd></div><div><dt>休館日</dt><dd>火曜・祝日<br /><small>※試合日などで不定休あり</small></dd></div></dl><p class="access-check-in">{checkInNote}</p><a class="text-link" href={mapLink('まさるボクシングジム ' + gym.address)} target="_blank" rel="noopener noreferrer">Googleマップでジムを見る <Icon name="arrow" /></a><div class="parking-info"><span class="parking-p">P</span><div><h4>{gym.parkingName}</h4><p>最大20台駐車可能<br />三重県津市東丸之内17-13</p><a href={mapLink(gym.parkingAddress)} target="_blank" rel="noopener noreferrer">駐車場の住所をGoogleマップで見る ↗</a></div></div></div><div class="maps"><div class="map-tabs" role="tablist" aria-label="マップの表示場所"><button id="gym-tab" role="tab" aria-selected="true" aria-controls="gym-map">ジムの所在地 <Icon name="pin" /></button><button id="parking-tab" role="tab" aria-selected="false" aria-controls="parking-map" tabindex="-1">{gym.parkingName} <span>P</span></button></div><div role="tabpanel" id="gym-map" aria-labelledby="gym-tab"><iframe src={gymMap} title="まさるボクシングジムの所在地" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div><div role="tabpanel" id="parking-map" aria-labelledby="parking-tab" hidden><iframe src={parkingMap} title={gym.parkingName + 'の住所：' + gym.parkingAddress} loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div><details class="parking-details"><summary>ジムと駐車場の位置関係を見る <Icon name="plus" /></summary><ParkingMap /><p>{gym.parkingName}はチラシ掲載住所の地図を表示しています。駐車区画は現地の案内をご確認ください。</p></details></div></div></section>
 
-      <section class="contact" id="contact" aria-labelledby="contact-title"><div class="wrap contact-grid"><div><p class="eyebrow">LET'S GET STARTED.</p><h2 id="contact-title">次は、あなたの番。</h2><p>見学・1日体験・入会について、お気軽にご連絡ください。</p></div><div class="contact-actions"><a class="contact-phone" href={gym.phoneHref}><span><Icon name="phone" /> お電話でのお問い合わせ・体験予約</span><strong>{gym.phone}</strong><small>平日 17:00–21:30 / 土日 14:00–18:00（火曜・祝日休館）</small></a><a class="contact-instagram" href={gym.instagram} target="_blank" rel="noopener noreferrer"><Icon name="instagram" /><span>公式Instagramを見る</span><Icon name="arrow" /></a><a class="email-link" href={`mailto:${gym.email}`}>メールでのお問い合わせ <span>↗</span></a></div></div></section>
+      <section class="contact" id="contact" aria-labelledby="contact-title"><div class="wrap contact-grid" data-reveal=""><div><p class="eyebrow">LET'S GET STARTED.</p><h2 id="contact-title">次は、あなたの番。</h2><p>見学・1日体験・入会について、お気軽にご連絡ください。</p></div><div class="contact-actions"><a class="contact-phone" href={gym.phoneHref}><span><Icon name="phone" /> お電話でのお問い合わせ・体験予約</span><strong>{gym.phone}</strong><small>平日 {weekdayHours} / 土日 {weekendHours}（火曜・祝日休館）<br />{checkInNote}</small></a><a class="contact-instagram" href={gym.instagram} target="_blank" rel="noopener noreferrer"><Icon name="instagram" /><span>公式Instagramを見る</span><Icon name="arrow" /></a><a class="email-link" href={`mailto:${gym.email}`}>メールでのお問い合わせ <span>↗</span></a></div></div></section>
     </main>
-    <footer class="site-footer wrap"><a class="footer-wordmark" href="#top">MASARU<span>BOXING GYM</span></a><div><p>まさるボクシングジム ／ TSU, MIE, JAPAN</p><small>サイト内のトレーニングビジュアルはイメージです。</small><p class="copyright">© {new Date().getFullYear()} MASARU BOXING GYM</p></div><a class="back-top" href="#top" aria-label="ページ先頭へ">↑</a></footer>
+    <footer class="site-footer wrap"><a class="footer-brand" href="#top" aria-label="まさるボクシングジム トップ"><Image src={logo} alt="" width={320} format="webp" /></a><div><p>まさるボクシングジム ／ TSU, MIE, JAPAN</p><small>サイト内のトレーニングビジュアルはイメージです。</small><p class="copyright">© {new Date().getFullYear()} MASARU BOXING GYM</p></div><a class="back-top" href="#top" aria-label="ページ先頭へ">↑</a></footer>
     <div class="mobile-contact"><a href={gym.phoneHref}><Icon name="phone" />見学・体験のお問い合わせ</a><a href={gym.instagram} target="_blank" rel="noopener noreferrer" aria-label="公式Instagram（新しいタブ）"><Icon name="instagram" /></a></div>
     <script>
-      import '../scripts/motion';
+      import '../scripts/section-reveal';
+
       const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
       const mobileNav = document.querySelector<HTMLElement>('#mobile-nav');
       const setMenu = (open: boolean) => {
@@ -109,7 +202,6 @@ const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/
         menuButton?.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
         if (mobileNav) mobileNav.hidden = !open;
         document.body.classList.toggle('menu-open', open);
-        document.dispatchEvent(new CustomEvent('gym:menu', { detail: open }));
       };
       menuButton?.addEventListener('click', () => setMenu(menuButton.getAttribute('aria-expanded') !== 'true'));
       mobileNav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
@@ -137,14 +229,12 @@ const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/
       if (campaign) {
         const updateCampaign = () => {
           const start = Date.parse(campaign.dataset.start || ''); const end = Date.parse(campaign.dataset.end || ''); const now = Date.now();
-          const wasHidden = campaign.hidden;
           campaign.hidden = !(campaign.dataset.enabled === 'true' && Number.isFinite(start) && Number.isFinite(end) && end >= start && now >= start && now <= end);
           const period = campaign.querySelector('.campaign-period');
           if (!campaign.hidden && period) {
             const format = (date: number) => new Date(date).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo', year:'numeric',month:'long',day:'numeric' });
             period.textContent = `実施期間：${format(start)}〜${format(end)}`;
           }
-          if (wasHidden !== campaign.hidden) document.dispatchEvent(new CustomEvent('gym:layout'));
         };
         updateCampaign(); window.setInterval(updateCampaign, 60000); document.addEventListener('visibilitychange', updateCampaign);
       }

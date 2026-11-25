@@ -11,7 +11,13 @@ export const gym = {
     locality: '津市',
     street: '東丸之内18-16 長谷部ビル2・3F',
   },
+  parkingName: 'まさるボクシングジム駐車場',
   parkingAddress: '三重県津市東丸之内17-13',
+  hours: {
+    weekdays: { opens: '17:00', closes: '21:30' },
+    weekends: { opens: '13:00', closes: '17:30' },
+    checkInNote: '平日・土日ともに、チェックインはジム終了時間の1時間前まで',
+  },
   admissionFee: '7,700',
   administrationFee: '3,300',
 };
