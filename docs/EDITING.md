@@ -8,7 +8,8 @@ SEO設定と公開後のSearch Console登録などは [SEO.md](./SEO.md) に記�
 - スタイル・レスポンシブ設定: `src/styles/global.css`
 - 料金・連絡先・キャンペーン・追加記事: `src/data/gym.ts`
 - 駐車場概略図: `src/components/ParkingMap.astro`
-- ファビコン: `public/masaru-mark.svg`
+- OGP画像 `src/assets/images/ogp.jpg`
+- ファビコン `public/favicon.svg` と `public/favicon.ico`
 
 既存のAstroプロジェクトに、オレンジ・チャコール・生成りを使った1ページのホームページを実装。REレギュラーコースだけ詳細・料金を掲載し、BFはご指定のパーソナル・セミパーソナル案内文にとどめています。
 

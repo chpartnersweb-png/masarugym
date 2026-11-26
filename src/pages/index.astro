@@ -1,6 +1,6 @@
 ---
 import { Image, getImage } from 'astro:assets';
-import socialImageSource from '../assets/generated/boxing-hero.png';
+import socialImage from '../assets/images/ogp.jpg';
 import desktopHero from '../assets/images/desktop-hero.png';
 import tabletHero from '../assets/images/tablet-hero.png';
 import mobileHero from '../assets/images/sp-hero.png';
@@ -24,10 +24,9 @@ const weekdayHours = `${weekdays.opens}～${weekdays.closes}`;
 const weekendHours = `${weekends.opens}～${weekends.closes}`;
 const nav = [{ href: '#about', label: 'ジムについて' }, { href: '#course', label: 'コース・料金' }, { href: '#join', label: '入会案内' }, { href: '#access', label: 'アクセス' }];
 const canonical = new URL('/', Astro.site).href;
-const [tabletHeroImage, mobileHeroImage, socialImage] = await Promise.all([
+const [tabletHeroImage, mobileHeroImage] = await Promise.all([
   getImage({ src: tabletHero, format: 'webp' }),
   getImage({ src: mobileHero, format: 'webp' }),
-  getImage({ src: socialImageSource, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 85 }),
 ]);
 const socialImageUrl = new URL(socialImage.src, Astro.site).href;
 const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/</g, '\\u003c');
@@ -51,8 +50,8 @@ const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/
     <meta property="og:description" content={seo.description} />
     <meta property="og:image" content={socialImageUrl} />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content={socialImage.width} />
+    <meta property="og:image:height" content={socialImage.height} />
     <meta property="og:image:alt" content={seo.socialImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={seo.title} />
@@ -60,7 +59,8 @@ const structuredData = JSON.stringify(createStructuredData(canonical)).replace(/
     <meta name="twitter:image" content={socialImageUrl} />
     <meta name="twitter:image:alt" content={seo.socialImageAlt} />
     <script type="application/ld+json" set:html={structuredData} />
-    <link rel="icon" type="image/svg+xml" href="/masaru-mark.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;0,900;1,800;1,900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />

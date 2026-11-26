@@ -3,7 +3,7 @@ import { gym } from './gym';
 export const seo = {
   title: '津市のボクシングジム｜まさるボクシングジム【三重県】',
   description: `三重県津市東丸之内のまさるボクシングジム。公式試合への挑戦から、ダイエット・体力づくり・ストレス解消まで。REレギュラーコースは予約不要・通い放題、毎回ミット打ちなどの指導付。料金・入会方法・体験予約・${gym.parkingName}をご案内します。`,
-  socialImageAlt: 'まさるボクシングジム｜DO IT!! FOR YOURSELF。グローブを構えるボクサーのイメージビジュアル。',
+  socialImageAlt: 'まさるボクシングジムのロゴ',
 };
 
 export function createStructuredData(canonical: string) {
